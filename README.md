@@ -8,6 +8,14 @@ RAG-based auditor that checks an Indian startup's privacy policy against the **D
 
 *Screenshots were captured by the author on the current build with Gemini on (`gemini-3.8-flash`, Gemini embeddings); citations show PDF page numbers. The 12 gaps in the gap report are the 11 rule-based failures plus one LLM-suggested gap, so the count can vary by 1 between Gemini runs.*
 
+## Screenshots
+
+| | |
+|---|---|
+| **Home** - example questions, sample policies<br>![Home](screenshots/01_home.png) | **Cited answers** - Act/Rules section and PDF page<br>![Chat with citations](screenshots/03_chat_with_citations.png) |
+| **Gap report** - 14 checks, severity, penalty ceiling<br>![Gap report](screenshots/02_bad_policy_gap_report.png) | **Fix text** - ready-to-paste clauses per gap<br>![Fix suggestions](screenshots/04_fix_suggestions.png) |
+| **Compliant policy** - good sample<br>![Good policy](screenshots/06_good_policy_gap_report.png) | **Audit trail** - SHA-256 hash chain, verify button<br>![Audit trail](screenshots/05_audit_trail.png) |
+
 ## Features
 
 | Area | What it does |
