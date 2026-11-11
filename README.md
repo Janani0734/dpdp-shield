@@ -34,15 +34,32 @@ With a Gemini key, `mode` is `gemini` and the answer text is model-written from 
 
 ## Setup
 
+Python 3.11+ is expected (tested on 3.11 and 3.13).
+
+**Windows (CMD)**
+```bat
+python -m venv .venv
+.venv\Scripts\activate
+python -m pip install -r requirements.txt
+copy .env.example .env
+:: open .env and put your key after GEMINI_API_KEY=
+python -m streamlit run app.py
+```
+
+**macOS / Linux**
 ```bash
-python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install -r requirements.txt                        # runtime only; Python 3.11+
-cp .env.example .env                                   # then put your key in GEMINI_API_KEY
-streamlit run app.py                                   # UI on http://localhost:8501
-uvicorn dpdp_shield.api:app --reload                   # optional API on :8000 (docs at /docs)
-pip install -r requirements-dev.txt                    # only for tests / regenerating samples
-pytest                                                 # 51 tests, no network or key needed
-python scripts/make_samples.py                         # optional: regenerate samples/*.pdf
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env        # then put your key in GEMINI_API_KEY
+streamlit run app.py
+```
+
+The UI opens on http://localhost:8501. Optional extras:
+```bash
+uvicorn dpdp_shield.api:app --reload      # REST API on :8000 (docs at /docs)
+pip install -r requirements-dev.txt       # only needed for tests / regenerating samples
+pytest                                    # 52 tests, no network or key needed
+python scripts/make_samples.py            # regenerate samples/*.pdf
 ```
 
 Get a free key at <https://aistudio.google.com/apikey>. **No key? It still runs** in offline mode (rule-based answers + local embeddings); the sidebar badge shows which mode is active.
