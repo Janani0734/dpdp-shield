@@ -1,0 +1,4 @@
+# Extra packages for running the tests and regenerating samples/*.pdf
+-r requirements.txt
+pytest==9.2.0
+reportlab==5.1.0

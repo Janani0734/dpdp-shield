@@ -1,0 +1,41 @@
+# QuickCart Technologies Pvt Ltd - Privacy Policy
+
+SAMPLE DOCUMENT: fictional company, written only to test DPDP-Shield. Intentionally non-compliant.
+
+Last updated: 1 March 2024
+
+1. Introduction
+
+Welcome to QuickCart, an online grocery delivery app. By using our app you agree to this Privacy Policy.
+
+2. Information We Collect
+
+We collect your name, mobile number, email address, delivery address, device identifiers, precise location and payment details when you register and place orders. We also collect your browsing activity inside the app.
+
+3. How We Use Information
+
+We use your information to process orders and deliver them, to personalise offers, to send marketing messages and to improve our services. We may share your information with delivery partners, advertisers and analytics providers for our business purposes.
+
+4. Who Can Use QuickCart
+
+Our services are available to users of all ages.
+
+5. Data Retention
+
+We keep your information for as long as necessary for our business needs.
+
+6. Security
+
+We use encryption for payment details and take reasonable steps to protect your other information.
+
+7. Your Choices
+
+You may request access to the personal data we hold about you by emailing support. You can update your profile details in the app. You may unsubscribe from marketing emails using the link in the email.
+
+8. Contact Us
+
+For any questions write to support@quickcart.example.
+
+9. Changes
+
+We may change this policy from time to time.

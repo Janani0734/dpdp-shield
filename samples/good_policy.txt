@@ -1,0 +1,63 @@
+# GreenLeaf Learning Pvt Ltd - Privacy Policy
+
+SAMPLE DOCUMENT: fictional company, written only to test DPDP-Shield. Written to be broadly aligned with the DPDP Act 2023; not legal advice.
+
+Version 3.0, effective 1 September 2026
+
+1. About this policy
+
+This policy explains how GreenLeaf Learning Pvt Ltd ("GreenLeaf", "we") processes the personal data of learners, parents and teachers on our learning app, in line with the Digital Personal Data Protection Act 2023 and the rules made under it. You can read it in English or Hindi.
+
+2. Personal data we collect and why
+
+We collect the following personal data, each only for the purpose stated.
+
+- Name and email address: to create your account and send service messages.
+
+- Mobile number: to verify your account and for password recovery.
+
+- Date of birth: to find out whether you are a child (under 18 years of age) so that we can apply the safeguards in section 4.
+
+- Learning activity and quiz scores: to show progress to learners and parents.
+
+- Device identifier and crash logs: to keep the app secure and fix bugs.
+
+We do not collect precise location.
+
+3. Consent and withdrawal
+
+We process your personal data only with your free, specific, informed and unambiguous consent, given by a clear affirmative action in the app. You can withdraw your consent at any time, as easily as you gave it, from Settings, Privacy or by writing to grievance@greenleaf.example. Withdrawal does not affect processing done before you withdrew.
+
+4. Children's data
+
+If you are under 18 years of age, we collect your personal data only with the verifiable consent of your parent or lawful guardian, obtained before we start processing. We verify the parent or guardian through a DigiLocker-based token or other reliable identity and age details. We do not track or behaviourally monitor children, and we do not show targeted advertising to them.
+
+5. How long we keep data
+
+We keep your account data while your account is active and for 12 months after you close it. Learning records are retained for 3 years as required by law. When consent is withdrawn or the purpose is no longer served, we erase the data and instruct our processors to do the same.
+
+6. Security
+
+We protect personal data with reasonable security safeguards, including encryption in transit and at rest, role-based access controls, activity logging and daily backups.
+
+7. Personal data breaches
+
+If a personal data breach occurs, we will without delay inform each affected user about what happened, the likely consequences and the steps we have taken, and we will intimate the Data Protection Board of India, giving full details within 72 hours. We report cyber incidents to CERT-In within 6 hours.
+
+8. Your rights
+
+You have the right to obtain a summary of the personal data we process about you and the parties we share it with.
+
+You have the right to request correction of inaccurate or misleading data, completion of incomplete data, and updating of your data.
+
+You have the right to request erasure of your personal data. We will erase it unless the law requires us to keep it.
+
+You have the right to nominate another person to exercise your rights if you die or become incapacitated.
+
+9. Grievance redressal
+
+Grievance Officer: Ms Meera Nair, Head of Privacy, GreenLeaf Learning Pvt Ltd, Coimbatore. Email: grievance@greenleaf.example. Phone: +91 422 000 0000. We acknowledge complaints within 48 hours and resolve them within 30 days. If you are not satisfied, you may complain to the Data Protection Board of India.
+
+10. Where data is stored
+
+Your personal data is stored and processed in India. If we ever transfer it outside India, we will do so only to countries not restricted by the Central Government.

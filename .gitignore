@@ -1,0 +1,14 @@
+# secrets
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+# generated / local
+data/
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.DS_Store
+*.db
+*.sqlite3
