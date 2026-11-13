@@ -14,7 +14,7 @@ RAG-based auditor that checks an Indian startup's privacy policy against the **D
 |---|---|
 | **Home** - example questions, sample policies<br>![Home](screenshots/01_home.png) | **Cited answers** - Act/Rules section and PDF page<br>![Chat with citations](screenshots/03_chat_with_citations.png) |
 | **Gap report** - 14 checks, severity, penalty ceiling<br>![Gap report](screenshots/02_bad_policy_gap_report.png) | **Fix text** - ready-to-paste clauses per gap<br>![Fix suggestions](screenshots/04_fix_suggestions.png) |
-| **Compliant policy** - good sample<br>![Good policy](screenshots/06_good_policy_gap_report.png) | **Audit trail** - SHA-256 hash chain, verify button<br>![Audit trail](screenshots/05_audit_trail.png) |
+| **Good sample** - all keyword checks present (not a finding of compliance)<br>![Good policy](screenshots/06_good_policy_gap_report.png) | **Audit trail** - SHA-256 hash chain, verify button<br>![Audit trail](screenshots/05_audit_trail.png) |
 
 ## Features
 
@@ -24,9 +24,9 @@ RAG-based auditor that checks an Indian startup's privacy policy against the **D
 | RAG | Top-5 DPDP passages + top-5 passages from *your* policy; the sections governing the matched topic are pinned into context |
 | Violation detector | 14 deterministic rule checks (child consent, retention, breach, erasure, grievance, security, ...) **plus** a Gemini semantic review for nuanced gaps |
 | Gap report | `{section, status, dpdp_ref, severity, evidence+page, fix_suggestion, penalty ceiling}` table |
-| Fix text | Compliant clause per gap (Gemini-tailored when a key is set, built-in templates otherwise) |
+| Fix text | Suggested clause per gap (Gemini-tailored when a key is set, built-in templates otherwise). A starting point for a lawyer, not final wording |
 | Audit trail | SHA-256 hash chain in SQLite; `/audit/verify` endpoint + UI button |
-| Interfaces | Streamlit UI (`app.py`) and FastAPI (`dpdp_shield/api.py`) |
+| Interfaces | Streamlit UI (`app.py`), FastAPI (`dpdp_shield/api.py`) and an Angular web UI (`frontend/`, see below) |
 
 Query output shape (real output from the offline build; `page` is the position in the bundled PDF, i.e. page 8 of `dpdp_act_2023.pdf`):
 ```json
@@ -66,7 +66,7 @@ The UI opens on http://localhost:8501. Optional extras:
 ```bash
 uvicorn dpdp_shield.api:app --reload      # REST API on :8000 (docs at /docs)
 pip install -r requirements-dev.txt       # only needed for tests / regenerating samples
-pytest                                    # 52 tests, no network or key needed
+pytest                                    # 63 backend tests, no network or key needed (about 4 min)
 python scripts/make_samples.py            # regenerate samples/*.pdf
 ```
 
@@ -81,11 +81,35 @@ Try the two samples (`samples/bad_policy.pdf`, `samples/good_policy.pdf`) via th
 
 Measured offline: bad policy → 11 violations, good policy → 0; queries answer in ~10-30 ms.
 
+## Web UI (Angular)
+
+A separate Angular frontend lives in [`frontend/`](frontend/): pick a bundled sample (or upload your own where the server allows it), run the checks,
+filter potential gaps by status, severity and source (deterministic rules vs AI suggestions), ask questions with citations, and verify the audit chain.
+
+```bash
+uvicorn dpdp_shield.api:app --port 8000     # backend
+cd frontend && npm ci && npm start          # http://localhost:4200
+```
+
+Setup, tests, build, deployment and limitations: [`frontend/README.md`](frontend/README.md). The API it uses is documented in [`docs/API_CONTRACT.md`](docs/API_CONTRACT.md).
+Needs a current Node.js LTS. The UI reads the server's limits and upload availability from `GET /config`, never retries uploads, analysis or questions automatically, and words every result as a "potential gap", never a legal finding.
+
+Backend settings added for it (all optional, see `.env.example`):
+
+| Variable | Effect |
+|---|---|
+| `DEMO_MODE=true` | Server refuses PDF/text uploads (403), requires `policy_id` on `/audit`, turns on rate limiting. Bundled samples still work |
+| `CORS_ORIGINS` | Comma-separated allowlist of browser origins (default: `localhost:4200`) |
+| `RATE_LIMIT_PER_MIN` | Per-client limit on costly POSTs (default 20 in demo mode, otherwise off) |
+| `MAX_TEXT_CHARS` | Cap for pasted policy text (default 100000) |
+
+Rule-based results are repeatable; AI-suggested gaps can differ between runs. There is **no authentication or per-user isolation**: the `policy_id` is the only capability, so do not enable arbitrary uploads on a shared public server.
+
 ## Architecture
 
 ```
-app.py (Streamlit)  ─┐
-dpdp_shield/api.py  ─┴─► pipeline.Shield
+frontend/ (Angular) ──HTTP──► dpdp_shield/api.py (FastAPI) ─┐
+app.py (Streamlit) ─────────────────────────────────────────┴─► pipeline.Shield
    ingestion.py   PDF → pages → chunks            retrieval.py  ChromaDB + KB loader
    embeddings.py  Gemini | local hash embedder    rules.py      14 regex compliance checks
    llm.py         Gemini wrapper, prompts, validators   report.py  gap report
@@ -107,11 +131,11 @@ Design choices worth knowing:
    - **Unofficial:** `cert_in_directions_2022.md` and `compliant_policy_template.md` are the author's own summaries, **not** official text and not verified against the originals. The UI tags them "(working summary)". Treat anything citing them as unverified.
    - **Page numbers** are positions in the bundled PDF. The Rules PDF has the Hindi version first (pages 1-23, not indexed but counted), so the first English page is page 24; the Act PDF is English only. The printed Gazette page number equals the PDF page number in both files.
    - To use another edition, replace the PDFs (filenames must contain `act` / `rules` / `cert`).
-2. **Gemini model names change and capacity varies.** The live Gemini path (gap-report review and Q&A) was tested **manually by the author** in Nov 2026 (`gemini-3.8-flash` for the gap review, `gemini-3.5-flash-lite` for chat; approximately 3-5 s per answer across a small number of manual runs, not a formal benchmark; repeated questions skip the embedding call). The automated tests use a fake model, and the offline path (rule-based answers, local embeddings) answers in ~10-30 ms. Google retires models and returns `503 high demand` at busy times, so three settings exist: `GEMINI_MODEL` (gap review), `GEMINI_QUERY_MODEL` (faster chat answers) and `GEMINI_FALLBACK_MODEL` (tried after retries fail). First start with Gemini embeddings indexes ~134 chunks, which can pause ~1 minute on the free tier's 100 requests/minute limit.
+2. **Gemini model names change and capacity varies.** The live Gemini path (gap-report review and Q&A) was tested **manually by the author** in Nov 2026 (`gemini-3.8-flash` for the gap review, `gemini-3.5-flash-lite` for chat; answer time varied from a few seconds to about 17 s across a small number of manual runs, depending on model and Google-side load; this is not a formal benchmark, and repeated questions skip the embedding call). The automated tests use a fake model, and the offline path (rule-based answers, local embeddings) answers in ~10-30 ms. Google retires models and returns `503 high demand` at busy times, so three settings exist: `GEMINI_MODEL` (gap review), `GEMINI_QUERY_MODEL` (faster chat answers) and `GEMINI_FALLBACK_MODEL` (tried after retries fail). First start with Gemini embeddings indexes ~134 chunks, which can pause ~1 minute on the free tier's 100 requests/minute limit.
 3. **Rule checks are wording heuristics.** "Pass" means the policy mentions the element, not that it is legally sufficient.
 4. **Audit chain is tamper-*evident*.** Anyone with write access to the whole SQLite file could rebuild it; publish `head_hash` somewhere you trust for stronger guarantees.
 5. Penalty figures are the Act's Schedule ceilings, not predictions. Scanned PDFs need OCR (not included); paste the text instead.
-6. Uploaded policies are stored under `data/` until replaced or deleted (`DELETE /policies/{id}`).
+6. Uploaded policies are stored under `data/` until replaced or deleted (`DELETE /policies/{id}`). Deleting a policy does **not** remove its audit-log rows (they contain the question text); they cannot be removed without breaking the hash chain.
 
 ## Troubleshooting
 
@@ -137,7 +161,7 @@ Code: MIT License (see `LICENSE`).
 
 ## Deploy
 
-> **Before deploying publicly:** a public app uses *your* Gemini key and quota for every visitor, has no login, and stores uploaded policies and the audit log on the server where all visitors share them. On hosts with an ephemeral disk the knowledge-base index is rebuilt on each cold start. For a public demo, use a separate restricted key, or `EMBEDDINGS_BACKEND=local`, and tell visitors not to upload real policies.
+> **Before deploying publicly:** a public app uses *your* Gemini key and quota for every visitor, has no login, and stores the audit log on the server where all visitors share it. On hosts with an ephemeral disk the knowledge-base index is rebuilt on each cold start. For a public demo, run the API with `DEMO_MODE=true` (samples only; uploads are blocked on the server, not just hidden), set `CORS_ORIGINS` to your exact frontend origin, use a separate restricted key or `EMBEDDINGS_BACKEND=local`, and keep the API behind HTTPS. The rate limiter is in-memory and per process.
 
 
 **Streamlit Community Cloud:** push to GitHub → New app → `app.py` → add `GEMINI_API_KEY` under *Secrets*. Note the filesystem is ephemeral (audit log and index reset on restart).
@@ -148,5 +172,7 @@ Code: MIT License (see `LICENSE`).
 app.py  requirements.txt  requirements-dev.txt  .env.example  README.md  LICENSE
 dpdp_shield/   core package        knowledge_base/  Act + Rules PDFs, unofficial CERT-In/template
 samples/       bad + good policy (.txt/.pdf)        tests/  pytest suite
-screenshots/   UI captures         scripts/make_samples.py
+screenshots/   Streamlit UI captures                scripts/make_samples.py
+frontend/      Angular web UI (own README, Vitest + Playwright tests)
+docs/          API_CONTRACT.md (endpoints, schemas, known gaps)
 ```
