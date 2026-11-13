@@ -1,0 +1,61 @@
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="shell">
+  <header class="topbar">
+    <a class="brand" routerLink="/dashboard">
+      <span class="logo"><app-icon name="shield" /></span>
+      <span class="brand-text">
+        <strong>DPDP-Shield</strong>
+        <small>Privacy-policy analysis against India's DPDP Act 2023 and Rules 2025</small>
+      </span>
+    </a>
+    <span class="spacer"></span>
+
+    <div class="status" role="status" aria-live="polite" data-testid="server-status">
+      @switch (server.state()) {
+        @case ('loading') {
+          <span class="pill neutral">Connecting to API…</span>
+        }
+        @case ('error') {
+          <span class="pill danger" data-testid="status-unreachable">API unreachable</span>
+          <button mat-button type="button" (click)="server.load()">
+            <app-icon name="refresh" /> Retry
+          </button>
+        }
+        @default {
+          @if (server.health(); as h) {
+            @if (h.mode === 'gemini') {
+              <span class="pill info" data-testid="status-mode" title="A Gemini key is configured on the server. Individual requests can still fall back to rule-based results; each result says so.">Gemini configured</span>
+            } @else {
+              <span class="pill warn" data-testid="status-mode" title="No Gemini key on the server: rule-based checks and local embeddings only.">Offline mode · rule-based</span>
+            }
+          }
+          @if (server.demoMode()) {
+            <span class="pill neutral" data-testid="status-demo" title="Uploads are disabled on this server; only the bundled samples can be analysed.">Demo · samples only</span>
+          }
+        }
+      }
+    </div>
+  </header>
+
+  <nav class="nav" aria-label="Primary">
+    @for (item of nav; track item.path) {
+      <a [routerLink]="item.path" routerLinkActive="active" #rla="routerLinkActive" [attr.aria-current]="rla.isActive ? 'page' : null">
+        <app-icon [name]="item.icon" />
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <main id="main" tabindex="-1">
+    <router-outlet />
+  </main>
+
+  <footer class="foot">
+    <app-icon name="info" />
+    <p>
+      DPDP-Shield is an automated aid and <strong>not legal advice</strong>. Findings are potential gaps based on keyword checks
+      and a language-model review; have qualified counsel verify them.
+    </p>
+  </footer>
+</div>

@@ -1,0 +1,284 @@
+@use '@angular/material' as mat;
+
+html {
+  color-scheme: light;
+  @include mat.theme(
+    (
+      color: (
+        theme-type: light,
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: (
+        plain-family: (system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif),
+        brand-family: (system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif),
+      ),
+      density: 0,
+    )
+  );
+}
+
+// Restrained navy / slate palette. All text pairs below meet WCAG AA (>= 4.5:1) on their backgrounds.
+:root {
+  --app-navy-900: #0f1b33;
+  --app-navy-700: #1b3a6b;
+  --app-navy-600: #254a86;
+  --app-slate-900: #1f2a3d;
+  --app-slate-600: #4f5f78;
+  --app-bg: #f3f5f9;
+  --app-surface: #ffffff;
+  --app-border: #d5dde9;
+  --app-focus: #1d4ed8;
+
+  --app-danger-fg: #8f1d1d;
+  --app-danger-bg: #fdecec;
+  --app-warn-fg: #7a4b00;
+  --app-warn-bg: #fff3d6;
+  --app-ok-fg: #14532d;
+  --app-ok-bg: #e4f4ea;
+  --app-info-fg: #1b3a6b;
+  --app-info-bg: #e6edf8;
+
+  --mat-sys-primary: var(--app-navy-700);
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-surface: var(--app-surface);
+  --mat-sys-on-surface: var(--app-slate-900);
+  --mat-sys-on-surface-variant: var(--app-slate-600);
+  --mat-sys-outline: #6b7a93;
+  --mat-sys-outline-variant: var(--app-border);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--app-bg);
+  color: var(--app-slate-900);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--app-navy-900);
+  line-height: 1.25;
+  margin: 0;
+}
+h1 {
+  font-size: 1.75rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.15rem;
+  font-weight: 650;
+}
+h3 {
+  font-size: 1rem;
+  font-weight: 650;
+}
+p {
+  margin: 0;
+}
+a {
+  color: var(--app-navy-600);
+}
+
+// Visible focus for every interactive element (keyboard users).
+:focus-visible {
+  outline: 3px solid var(--app-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ---- shared building blocks -------------------------------------------------
+.page {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 1100px;
+}
+.page-head {
+  display: grid;
+  gap: 0.35rem;
+}
+.muted {
+  color: var(--app-slate-600);
+}
+.card {
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: 12px;
+  padding: 1.25rem 1.35rem;
+  display: grid;
+  gap: 0.85rem;
+}
+.card.flat {
+  background: transparent;
+  border-style: dashed;
+}
+.grid-cards {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+.spacer {
+  flex: 1 1 auto;
+}
+.stat {
+  display: grid;
+  gap: 0.15rem;
+}
+.stat .value {
+  font-size: 2rem;
+  font-weight: 650;
+  color: var(--app-navy-900);
+  line-height: 1.1;
+}
+.stat .label {
+  font-size: 0.85rem;
+  color: var(--app-slate-600);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.pill.danger {
+  color: var(--app-danger-fg);
+  background: var(--app-danger-bg);
+  border-color: #f2c4c4;
+}
+.pill.warn {
+  color: var(--app-warn-fg);
+  background: var(--app-warn-bg);
+  border-color: #efd69a;
+}
+.pill.ok {
+  color: var(--app-ok-fg);
+  background: var(--app-ok-bg);
+  border-color: #b9dfc8;
+}
+.pill.info {
+  color: var(--app-info-fg);
+  background: var(--app-info-bg);
+  border-color: #c5d3ea;
+}
+.pill.neutral {
+  color: var(--app-slate-900);
+  background: #eef1f6;
+  border-color: var(--app-border);
+}
+
+.banner {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-size: 0.95rem;
+}
+.banner.danger {
+  color: var(--app-danger-fg);
+  background: var(--app-danger-bg);
+  border-color: #f2c4c4;
+}
+.banner.warn {
+  color: var(--app-warn-fg);
+  background: var(--app-warn-bg);
+  border-color: #efd69a;
+}
+.banner.info {
+  color: var(--app-info-fg);
+  background: var(--app-info-bg);
+  border-color: #c5d3ea;
+}
+
+.empty {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+  padding: 1.5rem;
+  border: 1px dashed var(--app-border);
+  border-radius: 12px;
+  background: var(--app-surface);
+}
+
+// Subtle, optional motion — fully disabled for users who ask for reduced motion.
+@media (prefers-reduced-motion: no-preference) {
+  .fade-in {
+    animation: fade-in 180ms ease-out both;
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Buttons, form controls and small helpers shared by feature pages.
+.btn {
+  display: inline-flex; align-items: center; gap: 0.4rem; min-height: 40px; padding: 0.4rem 0.9rem;
+  font: inherit; font-weight: 600; color: var(--app-navy-700); background: var(--app-surface);
+  border: 1px solid var(--app-navy-700); border-radius: 8px; cursor: pointer; text-decoration: none;
+}
+.btn:hover:not(:disabled) { background: var(--app-info-bg); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn.primary { color: #fff; background: var(--app-navy-700); }
+.btn.primary:hover:not(:disabled) { background: var(--app-navy-600); }
+.btn.danger { color: #fff; background: var(--app-danger-fg); border-color: var(--app-danger-fg); }
+.btn.link { border-color: transparent; background: transparent; padding: 0.2rem 0.4rem; min-height: 32px; text-decoration: underline; }
+input[type='file'], select, textarea, input[type='text'] { font: inherit; color: var(--app-slate-900); }
+select, textarea, input[type='text'] { padding: 0.45rem 0.6rem; border: 1px solid #6b7a93; border-radius: 8px; background: #fff; }
+.small { font-size: 0.85rem; }
+.field-error { color: var(--app-danger-fg); margin: 0; }
+.sev { font-weight: 700; text-transform: capitalize; }
+.sev.high { color: var(--app-danger-fg); }
+.sev.medium { color: var(--app-warn-fg); }
+.sev.low { color: var(--app-info-fg); }
