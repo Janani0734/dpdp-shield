@@ -106,6 +106,8 @@ class Shield:
         return self._register(filename, pages, "pdf")
 
     def ingest_text(self, text: str, name: str = "pasted-policy") -> PolicyDoc:
+        if len(text or "") > self.settings.max_text_chars:
+            raise PolicyIngestError(f"Pasted text is longer than {self.settings.max_text_chars:,} characters.")
         return self._register(name, pages_from_text(text), "text")
 
     def _register(self, name: str, pages: list[Page], source_type: str) -> PolicyDoc:

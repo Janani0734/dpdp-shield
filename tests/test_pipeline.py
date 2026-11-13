@@ -88,3 +88,17 @@ def test_offline_citations_cover_every_cited_section(tmp_path):
     r = sh.ask(doc.id, "Is there a breach notification clause?")
     cited = {(c["source"], c["section"]) for c in r["citations"]}
     assert ("DPDP Rules 2025", "Rule 7") in cited and ("DPDP Act 2023", "Section 8") in cited
+
+
+def test_query_embedding_is_cached(tmp_path):
+    import dataclasses
+    from dpdp_shield.config import Settings
+    from dpdp_shield.pipeline import Shield
+
+    sh = Shield(dataclasses.replace(Settings.from_env(), data_dir=tmp_path, gemini_api_key="", embeddings_backend="local"))
+    calls = []
+    real = sh.embedder.embed_query
+    sh.embedder.embed_query = lambda t: (calls.append(t), real(t))[1]
+    sh._embed_question("Is there a breach notification clause?")
+    sh._embed_question("Is there a breach notification clause?")
+    assert len(calls) == 1

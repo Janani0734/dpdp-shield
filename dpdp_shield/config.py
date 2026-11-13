@@ -11,6 +11,10 @@ ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / ".env")
 
 
+def _bool(name: str, default: bool = False) -> bool:
+    return os.getenv(name, str(default)).strip().lower() in {"1", "true", "yes", "on"}
+
+
 def _int(name: str, default: int) -> int:
     try:
         return int(os.getenv(name, default))
@@ -37,10 +41,22 @@ class Settings:
     llm_timeout_s: float = 20.0
     review_timeout_s: float = 60.0
     max_policy_chars_for_llm: int = 60_000
+    max_text_chars: int = 100_000  # pasted-text cap (PDF size is capped by max_pdf_mb / max_pdf_pages)
+    max_question_chars: int = 1000
+    # Public-demo controls (all off by default so local use / Streamlit behave as before).
+    demo_mode: bool = False  # True: uploads/pasted text disabled server-side, /audit requires policy_id, rate limit on
+    rate_limit_per_min: int = 0  # per-client limit on POST endpoints that cost compute/LLM; 0 = off
+    cors_origins: tuple[str, ...] = ("http://localhost:4200", "http://127.0.0.1:4200")
 
     @classmethod
     def from_env(cls) -> "Settings":
+        demo = _bool("DEMO_MODE")
+        origins = tuple(o.strip().rstrip("/") for o in os.getenv("CORS_ORIGINS", ",".join(cls.cors_origins)).split(",") if o.strip())
         return cls(
+            demo_mode=demo,
+            rate_limit_per_min=_int("RATE_LIMIT_PER_MIN", 20 if demo else 0),
+            max_text_chars=_int("MAX_TEXT_CHARS", cls.max_text_chars),
+            cors_origins=origins,
             gemini_api_key=os.getenv("GEMINI_API_KEY", "").strip(),
             gemini_model=os.getenv("GEMINI_MODEL", cls.gemini_model),
             gemini_embed_model=os.getenv("GEMINI_EMBED_MODEL", cls.gemini_embed_model),

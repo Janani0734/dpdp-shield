@@ -143,4 +143,4 @@ def test_query_model_and_token_cap_are_passed(shield, bad_pdf):
     shield.settings = dataclasses.replace(shield.settings, gemini_query_model="fast-model")
     shield.llm = Spy()
     shield.ask(doc.id, "Is there a breach notification clause?")
-    assert seen == {"model": "fast-model", "max_tokens": 800, "retries": 1}
+    assert seen == {"model": "fast-model", "max_tokens": 450, "retries": 1}

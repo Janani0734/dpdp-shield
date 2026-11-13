@@ -82,10 +82,15 @@ class AuditLog:
             finally:
                 con.close()
 
-    def recent(self, limit: int = 50) -> list[dict]:
+    def recent(self, limit: int = 50, policy_id: str | None = None) -> list[dict]:
         con = self._connect()
         try:
-            rows = con.execute("SELECT * FROM audit_log ORDER BY id DESC LIMIT ?", (limit,)).fetchall()
+            if policy_id is None:
+                rows = con.execute("SELECT * FROM audit_log ORDER BY id DESC LIMIT ?", (limit,)).fetchall()
+            else:
+                rows = con.execute(
+                    "SELECT * FROM audit_log WHERE policy_id = ? ORDER BY id DESC LIMIT ?", (policy_id, limit)
+                ).fetchall()
         finally:
             con.close()
         return [dict(r) for r in rows]
